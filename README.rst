@@ -44,8 +44,8 @@ Overview
     :target: https://landscape.io/github/reegis/scenario_builder/master
     :alt: Code Quality Status
 
-.. |codacy| image:: https://img.shields.io/codacy/grade/CODACY_ID.svg
-    :target: https://www.codacy.com/app/reegis/scenario_builder
+.. |codacy| image:: https://app.codacy.com/project/badge/Grade/08b09905fed64405a311dae925713d31
+    :target: https://www.codacy.com/gh/reegis/scenario_builder
     :alt: Codacy Code Quality Status
 
 .. |codeclimate| image:: https://codeclimate.com/github/reegis/scenario_builder/badges/gpa.svg
