@@ -14,8 +14,13 @@ Overview
         | |coveralls| |codecov|
         | |landscape| |scrutinizer| |codacy| |codeclimate|
     * - package
+      - | |commits-since|
+
+..
+    * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
-        | |commits-since|
+
+
 .. |docs| image:: https://readthedocs.org/projects/scenario_builder/badge/?style=flat
     :target: https://readthedocs.org/projects/scenario_builder
     :alt: Documentation Status
@@ -44,33 +49,33 @@ Overview
     :target: https://landscape.io/github/reegis/scenario_builder/master
     :alt: Code Quality Status
 
-.. |codacy| image:: https://img.shields.io/codacy/grade/CODACY_ID.svg
-    :target: https://www.codacy.com/app/reegis/scenario_builder
+.. |codacy| image:: https://app.codacy.com/project/badge/Grade/08b09905fed64405a311dae925713d31
+    :target: https://www.codacy.com/gh/reegis/scenario_builder?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=reegis/scenario_builder&amp;utm_campaign=Badge_Grade
     :alt: Codacy Code Quality Status
 
-.. |codeclimate| image:: https://codeclimate.com/github/reegis/scenario_builder/badges/gpa.svg
-   :target: https://codeclimate.com/github/reegis/scenario_builder
-   :alt: CodeClimate Quality Status
+.. |codeclimate| image:: https://api.codeclimate.com/v1/badges/bd6d8bb6b3f0f16f5a1a/maintainability
+   :target: https://codeclimate.com/github/reegis/scenario_builder/maintainability
+   :alt: CodeClimate Maintainability
+..
+    .. |version| image:: https://img.shields.io/pypi/v/scenario-builder.svg
+        :alt: PyPI Package latest release
+        :target: https://pypi.org/project/scenario-builder
 
-.. |version| image:: https://img.shields.io/pypi/v/scenario-builder.svg
-    :alt: PyPI Package latest release
-    :target: https://pypi.org/project/scenario-builder
+    .. |wheel| image:: https://img.shields.io/pypi/wheel/scenario-builder.svg
+        :alt: PyPI Wheel
+        :target: https://pypi.org/project/scenario-builder
 
-.. |wheel| image:: https://img.shields.io/pypi/wheel/scenario-builder.svg
-    :alt: PyPI Wheel
-    :target: https://pypi.org/project/scenario-builder
+    .. |supported-versions| image:: https://img.shields.io/pypi/pyversions/scenario-builder.svg
+        :alt: Supported versions
+        :target: https://pypi.org/project/scenario-builder
 
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/scenario-builder.svg
-    :alt: Supported versions
-    :target: https://pypi.org/project/scenario-builder
+    .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/scenario-builder.svg
+        :alt: Supported implementations
+        :target: https://pypi.org/project/scenario-builder
 
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/scenario-builder.svg
-    :alt: Supported implementations
-    :target: https://pypi.org/project/scenario-builder
-
-.. |commits-since| image:: https://img.shields.io/github/commits-since/reegis/scenario_builder/vv0.0.1.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/reegis/scenario_builder/v0.0.1.svg
     :alt: Commits since latest release
-    :target: https://github.com/reegis/scenario_builder/compare/vv0.0.1...master
+    :target: https://github.com/reegis/scenario_builder/compare/v0.0.1...master
 
 
 .. |scrutinizer| image:: https://img.shields.io/scrutinizer/quality/g/reegis/scenario_builder/master.svg
