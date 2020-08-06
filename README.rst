@@ -31,7 +31,7 @@ Overview
 
 .. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/reegis/scenario_builder?branch=master&svg=true
     :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/reegis/scenario_builder
+    :target: https://ci.appveyor.com/project/uvchik/scenario-builder
 
 .. |requires| image:: https://requires.io/github/reegis/scenario_builder/requirements.svg?branch=master
     :alt: Requirements Status
