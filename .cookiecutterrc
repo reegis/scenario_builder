@@ -1,0 +1,70 @@
+# This file exists so you can easily regenerate your project.
+#
+# `cookiepatcher` is a convenient shim around `cookiecutter`
+# for regenerating projects (it will generate a .cookiecutterrc
+# automatically for any template). To use it:
+#
+#    pip install cookiepatcher
+#    cookiepatcher gh:ionelmc/cookiecutter-pylibrary scenario_builder
+#
+# See:
+#    https://pypi.org/project/cookiepatcher
+#
+# Alternatively, you can run:
+#
+#    cookiecutter --overwrite-if-exists --config-file=scenario_builder/.cookiecutterrc gh:ionelmc/cookiecutter-pylibrary
+
+default_context:
+
+    _extensions:               ['jinja2_time.TimeExtension']
+    _template:                 'gh:ionelmc/cookiecutter-pylibrary'
+    allow_tests_inside_package: 'yes'
+    appveyor:                  'yes'
+    c_extension_function:      'longest'
+    c_extension_module:        '_scenario_builder'
+    c_extension_optional:      'no'
+    c_extension_support:       'no'
+    c_extension_test_pypi:     'no'
+    c_extension_test_pypi_username: 'reegis'
+    codacy:                    'yes'
+    codacy_projectid:          'CODACY_ID'
+    codeclimate:               'yes'
+    codecov:                   'yes'
+    command_line_interface:    'no'
+    command_line_interface_bin_name: 'scenario-builder'
+    coveralls:                 'yes'
+    coveralls_token:           'COVERALLS_TOKEN'
+    distribution_name:         'scenario-builder'
+    email:                     'krien@uni-bremen.de'
+    full_name:                 'reegis'
+    landscape:                 'yes'
+    license:                   'MIT license'
+    linter:                    'flake8'
+    package_name:              'scenario_builder'
+    pre_commit:                'no'
+    project_name:              'scenario_builder'
+    project_short_description: 'Tools to build scenario inputs from historical data or future assumptions'
+    pypi_badge:                'yes'
+    pypi_disable_upload:       'no'
+    release_date:              'today'
+    repo_hosting:              'github.com'
+    repo_hosting_domain:       'github.com'
+    repo_name:                 'scenario_builder'
+    repo_username:             'reegis'
+    requiresio:                'yes'
+    scrutinizer:               'yes'
+    setup_py_uses_setuptools_scm: 'no'
+    setup_py_uses_test_runner: 'no'
+    sphinx_docs:               'yes'
+    sphinx_docs_hosting:       'https://scenario_builder.readthedocs.io/'
+    sphinx_doctest:            'no'
+    sphinx_theme:              'sphinx-rtd-theme'
+    test_matrix_configurator:  'yes'
+    test_matrix_separate_coverage: 'yes'
+    test_runner:               'pytest'
+    travis:                    'yes'
+    travis_osx:                'no'
+    version:                   'v0.0.1'
+    website:                   'https://github.com/reegis'
+    year_from:                 '2020'
+    year_to:                   '2020'
