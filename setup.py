@@ -27,7 +27,8 @@ setup(
     name="scenario-builder",
     version="v0.0.1",
     license="MIT",
-    description="Tools to build scenario inputs from historical data or future assumptions",
+    description=("Tools to build scenario inputs from historical data or"
+                 " future assumptions"),
     long_description="%s\n%s"
     % (
         re.compile("^.. start-badges.*^.. end-badges", re.M | re.S).sub(
@@ -59,7 +60,8 @@ setup(
     ],
     project_urls={
         "Documentation": "https://scenario_builder.readthedocs.io/",
-        "Changelog": "https://scenario_builder.readthedocs.io/en/latest/changelog.html",
+        "Changelog":
+            "https://scenario_builder.readthedocs.io/en/latest/changelog.html",
         "Issue Tracker": "https://github.com/reegis/scenario_builder/issues",
     },
     keywords=[
