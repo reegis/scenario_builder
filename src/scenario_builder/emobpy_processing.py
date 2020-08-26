@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import numpy as np
 from reegis import config as cfg
-
+from matplotlib import pyplot as plt
 
 def get_charging_profiles_from_database(path):
     """
@@ -100,6 +100,8 @@ def return_normalized_charging_series(df):
 
     # Cut off initial charging
     df.iloc[0:48] = df.iloc[48:96].values
+    # Cut off end charging to intial SoC
+    df.iloc[len(df)-48:len(df)] = df.iloc[len(df)-96:len(df)-48].values
     idx = pd.DatetimeIndex(df.index, freq='30min')
     df.set_index(idx, inplace=True)
     p_immediate = df['immediate']
@@ -122,6 +124,10 @@ def return_normalized_charging_series(df):
     P_sum_norm = pd.concat([immediate_norm, balanced_norm, norm_23to8, norm_0to24], axis=1)
     smaller_zero = P_sum_norm < 0
     P_sum_norm[smaller_zero] = 0
+
+    for n in ['immediate', 'balanced', '23to8', '0to24']:
+        inc_fac = 1 / P_sum_norm[n].sum()
+        P_sum_norm[n] = P_sum_norm[n].multiply(inc_fac)
 
     return P_sum_norm
 
@@ -172,3 +178,26 @@ def return_sum_charging_power(path=None):
         P_sum.set_index('Unnamed: 0', drop=True, inplace=True)
 
     return P_sum
+
+
+def return_averaged_charging_series(weight_im=0.4, weight_bal=0.4, weight_night=0.2):
+    cs = return_sum_charging_power()
+    cs_norm = return_normalized_charging_series(cs)
+
+    im = cs_norm["immediate"]
+    bal = cs_norm["balanced"]
+    night = cs_norm["23to8"]
+
+    P_charge = weight_im * im + weight_bal * bal + weight_night * night
+
+    return P_charge
+
+
+def plot_charging_series_comparison(df, df_mean):
+    fig, axs = plt.subplots(5)
+    fig.suptitle('Charging strategy comparison')
+    axs[0].plot(df["immediate"]), axs[0].set_title('Immediate')
+    axs[1].plot(df["balanced"]), axs[1].set_title('balanced')
+    axs[2].plot(df["0to24"]), axs[2].set_title('0to24')
+    axs[3].plot(df["23to8"]), axs[3].set_title('23to8')
+    axs[4].plot(df_mean), axs[4].set_title('Averaged series')
