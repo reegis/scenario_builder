@@ -3,7 +3,7 @@ import oemof.thermal.compression_heatpumps_and_chillers as cmpr_hp_chiller
 import pandas as pd
 import numpy as np
 from disaggregator import data
-from reegis import coastdat
+from reegis import coastdat, demand_disaggregator
 from reegis import config as cfg
 
 
@@ -244,3 +244,30 @@ def calculate_mixed_cops_by_nuts3(year, name, share_ashp=0.7, share_gshp=0.3, qu
         COP_NUTS3_water = pd.read_csv(fn_water)
 
     return COP_NUTS3, COP_NUTS3_water
+
+
+def aggregate_COP_by_region(regions, COP):
+    mean_COP = pd.DataFrame(columns=regions.index)
+    #mean_COP_water = pd.DataFrame(columns=regions.index)
+
+    nuts3_list = demand_disaggregator.get_nutslist_for_regions(regions)
+
+    for zone in regions.index:
+        idx = nuts3_list.loc[zone]["nuts"]
+        mean_COP[zone] = COP[idx].mean(axis=1)
+        #mean_COP_water[zone] = COP_water[idx].mean(axis=1)
+
+    return mean_COP
+
+
+def get_hp_timeseries(heat_profile, cop, E_el):
+    cop.index = heat_profile.index
+
+    for Q_rated in range(0,10000000,1000):
+        heat_hp = Q_rated * cop * heat_profile
+        elc_hp = heat_hp / cop
+
+        if elc_hp.sum() > E_el:
+            break
+
+    return elc_hp, heat_hp

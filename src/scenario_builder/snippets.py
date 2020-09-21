@@ -11,7 +11,7 @@ def get_cost_emission_scenario_data(path_to_data):
     for n in commodity_sources.keys():
         cost_data = pd.read_excel(path_to_data, n)
         cost_data.set_index('Unnamed: 0', drop=True, inplace=True)
-        cost_data.drop(['costs', 'emission_cost', 'carbon_price'], inplace=True)
+        cost_data.drop(['emission_cost', 'total_cost'], inplace=True)
         commodity_sources[n] = cost_data
 
     return commodity_sources
@@ -30,7 +30,7 @@ def return_normalized_domestic_profiles(regions, df):
     return profile_domestic
 
 
-def return_normalized_industrial_profiles(regions,df):
+def return_normalized_industrial_profiles(regions, df):
 
     test = df.groupby(level=[0, 2], axis=1).sum()
     profile_domestic = pd.DataFrame(index=test.index, columns=regions.index[0:18])
@@ -86,3 +86,28 @@ def transform_NEP_capacities_to_de21(path_to_NEP_capacities):
         NEP_capacity_de21.loc[zone]["P_pv"] = P_NEP_nuts3["pv"][idx].sum()
 
     return NEP_capacity_de21
+
+
+def load_NEP_pp_capacities(path_to_NEP_capacities):
+    NEP2030_capacity = pd.read_excel(path_to_NEP_capacities)
+    NEP2030_capacity.set_index('fedstate', drop=True, inplace=True)
+    NEP2030_capacity = NEP2030_capacity.multiply(1e3)
+
+    # Select pp capacities
+    pp_capacities = pd.concat([NEP2030_capacity['lignite'], NEP2030_capacity['hard coal'], NEP2030_capacity['oil'],
+                             NEP2030_capacity['natural gas'], NEP2030_capacity['biomass'],
+                             NEP2030_capacity['other']], axis=1)
+
+    return pp_capacities
+
+
+def aggregate_by_region(regions, data):
+    out_df = pd.Series(index=regions.index)
+    nuts3_list = demand_disaggregator.get_nutslist_for_regions(regions)
+
+    for zone in regions.index:
+        idx = nuts3_list.loc[zone]["nuts"]
+        out_df.loc[zone] = data[idx].sum()
+
+    return out_df
+
