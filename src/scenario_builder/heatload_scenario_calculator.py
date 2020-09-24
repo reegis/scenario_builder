@@ -134,6 +134,7 @@ def get_industry_CTS_process_heat_scenario(region_pick, efficiency_gain=0.2):
     sum_gas_industry = gc_industry.sum().sum()
     # Calculate factor of process heat consumption to gas consumption.
     # Assumption: Process heat demand correlates with gas demand
+    # ToDo Quellenangaben für hard gecodete Werte in Code beifügen
     process_heat_2015 = (515 + 42) * 1e6
     process_heat = process_heat_2015 * (1-efficiency_gain)
     inc_fac = process_heat / sum_gas_industry
@@ -157,6 +158,8 @@ def get_combined_heatload_for_region_scenario(name, region_pick=None, m_type=2 ,
         Name of scenario
     region_pick : list
         Selected regions in NUTS-3 format, if None function will return demand for all regions
+    # ToDo Docstring ergänzen
+    eff_gain ...
 
     Returns: pd.DataFrame
         Dataframe containing aggregated yearly low temperature heat demand (households, CTS, industry) as well

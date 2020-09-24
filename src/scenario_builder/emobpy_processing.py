@@ -100,7 +100,7 @@ def return_normalized_charging_series(df):
 
     # Cut off initial charging
     df.iloc[0:48] = df.iloc[48:96].values
-    # Cut off end charging to intial SoC
+    # Cut off end charging to initial SoC
     df.iloc[len(df)-48:len(df)] = df.iloc[len(df)-96:len(df)-48].values
     idx = pd.DatetimeIndex(df.index, freq='30min')
     df.set_index(idx, inplace=True)

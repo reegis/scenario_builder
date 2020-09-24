@@ -66,7 +66,7 @@ def transform_NEP_capacities_to_de21(path_to_NEP_capacities):
     mapped_nuts = demand_disaggregator.get_nutslist_for_regions(fed_states)
     res_capacity_nuts3 = land_availability_glaes.get_pv_wind_capacity_potential_by_nuts3()
 
-        # Zuordnung der installierten Leistungen zu den jeweiligen Landkreisen
+    # Zuordnung der installierten Leistungen zu den jeweiligen Landkreisen
     P_NEP_nuts3 = pd.DataFrame(index=nuts3_index, columns=['onshore', 'pv'])
 
     for zone in compare_RES.index:
