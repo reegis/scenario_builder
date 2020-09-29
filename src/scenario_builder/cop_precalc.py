@@ -169,7 +169,9 @@ def calculate_mixed_COPS_per_region(t_amb, t_ground, quality_grade, share_ashp=0
 
     # Limit COP to 7
     limit = cops_aggregated >= 7
+    artifact = cops_aggregated < 0
     cops_aggregated[limit] = 7
+    cops_aggregated[artifact] = 7
 
     return cops_aggregated
 

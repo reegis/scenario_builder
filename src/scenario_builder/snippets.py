@@ -110,4 +110,3 @@ def aggregate_by_region(regions, data):
         out_df.loc[zone] = data[idx].sum()
 
     return out_df
-
