@@ -5,11 +5,14 @@ SPDX-FileCopyrightText: 2016-2019 Uwe Krien <krien@uni-bremen.de>
 SPDX-License-Identifier: MIT
 """
 
-from scenario_builder import data, config as cfg
-import pandas as pd
-from reegis import commodity_sources
 import logging
 from warnings import warn
+
+import pandas as pd
+from reegis import commodity_sources
+
+from scenario_builder import config as cfg
+from scenario_builder import data
 
 
 def scenario_commodity_sources(year):

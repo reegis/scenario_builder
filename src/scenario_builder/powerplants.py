@@ -5,14 +5,19 @@ SPDX-FileCopyrightText: 2016-2019 Uwe Krien <krien@uni-bremen.de>
 SPDX-License-Identifier: MIT
 """
 
-import pandas as pd
-import os
 import logging
+import os
 from warnings import warn
+
+import pandas as pd
+from reegis import bmwi
+from reegis import energy_balance
 from reegis import geometries as reegis_geometries
+from reegis import powerplants
+
 from scenario_builder import config as cfg
-from reegis import powerplants, bmwi, energy_balance
-from scenario_builder import data, demand
+from scenario_builder import data
+from scenario_builder import demand
 
 # Todo: Revise and test.
 

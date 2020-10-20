@@ -9,9 +9,9 @@ import os
 from types import SimpleNamespace
 
 import pandas as pd
-from scenario_builder import config as cfg
 from reegis.tools import download_file
 
+from scenario_builder import config as cfg
 
 TRANSLATION_FUEL = {
     "Abfall": "waste",

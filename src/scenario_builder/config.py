@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 """
 
 import os
-from reegis.config import *
 
+from reegis.config import *
 
 _loaded = False
 if not _loaded:
