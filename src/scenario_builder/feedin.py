@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 """
 
 from reegis import coastdat
-from reegis import geometries
 
 
 def scenario_feedin(regions, year, name, weather_year=None):
