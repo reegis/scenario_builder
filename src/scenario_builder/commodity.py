@@ -27,8 +27,10 @@ def scenario_commodity_sources(year):
 
     Examples
     --------
-    >>> regions=geometries.deflex_regions(rmap="de21")  # doctest: +SKIP
-    >>> pp=scenario_powerplants(dict(), regions, 2014, "de21"
+    >>> from reegis import geometries
+    >>> from scenario_builder import powerplants
+    >>> fs=geometries.get_federal_states_polygon()  # doctest: +SKIP
+    >>> pp=powerplants.scenario_powerplants(dict(), fs, 2014, "federal_states"
     ...     )  # doctest: +SKIP
     >>> src=scenario_commodity_sources(pp)  # doctest: +SKIP
     >>> round(src.loc[("DE", "hard coal"), "costs"], 2)  # doctest: +SKIP

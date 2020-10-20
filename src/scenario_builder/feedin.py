@@ -23,7 +23,8 @@ def scenario_feedin(regions, year, name, weather_year=None):
 
     Examples
     --------
-    >>> regions = geometries.get_federal_states_polygon()  # doctest: +SKIP
+    >>> from reegis import geometries  # doctest: +SKIP
+    >>> fs=geometries.get_federal_states_polygon()  # doctest: +SKIP
     >>> f = scenario_feedin(regions, 2014, "fs")  # doctest: +SKIP
     >>> f["NI"].sum()  # doctest: +SKIP
     geothermal    4380.000000

@@ -119,7 +119,8 @@ def scenario_demand(regions, year, name, weather_year=None):
 
     Examples
     --------
-    >>> regions=geometries.deflex_regions(rmap="de21")  # doctest: +SKIP
+    >>> from reegis import geometries  # doctest: +SKIP
+    >>> fs=geometries.get_federal_states_polygon()  # doctest: +SKIP
     >>> my_demand=scenario_demand(regions, 2014, "de21")  # doctest: +SKIP
     >>> int(my_demand["DE01", "district heating"].sum())  # doctest: +SKIP
     18639262

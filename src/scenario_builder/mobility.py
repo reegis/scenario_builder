@@ -24,18 +24,18 @@ def scenario_mobility(year, table):
 
     Examples
     --------
-    >>> table = scenario_mobility(2015, {})
-    >>> table["mobility_mileage"]["DE"].sum()
+    >>> my_table = scenario_mobility(2015, {})
+    >>> my_table["mobility_mileage"]["DE"].sum()
     diesel    3.769021e+11
     petrol    3.272263e+11
     other     1.334462e+10
     dtype: float64
-    >>> table["mobility_spec_demand"]["DE"].loc["passenger car"]
+    >>> my_table["mobility_spec_demand"]["DE"].loc["passenger car"]
     diesel    0.067
     petrol    0.079
     other     0.000
     Name: passenger car, dtype: float64
-    >>> table["mobility_energy_content"]["DE"]["diesel"]
+    >>> my_table["mobility_energy_content"]["DE"]["diesel"]
     energy_per_liter [MJ/l]    34.7
     Name: diesel, dtype: float64
     """

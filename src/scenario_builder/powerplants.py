@@ -184,17 +184,18 @@ def scenario_powerplants(table_collection, regions, year, name):
 
     Examples
     --------
-    >>> regions=geometries.deflex_regions(rmap="de21")
-    >>> pp=scenario_powerplants(
-    ...     dict(), regions, 2014, "de21")  # doctest: +SKIP
-    >>> pp["volatile_source"].loc[("DE03", "wind"), "capacity"
+    >>> from reegis import geometries
+    >>> fs=geometries.get_federal_states_polygon()
+    >>> my_pp=scenario_powerplants(
+    ...     dict(), fs, 2014, "federal_states")  # doctest: +SKIP
+    >>> my_pp["volatile_source"].loc[("DE03", "wind"), "capacity"
     ...     ] # doctest: +SKIP
     3052.8
-    >>> pp["transformer"].loc[("DE03", "lignite"), "capacity"
+    >>> my_pp["transformer"].loc[("DE03", "lignite"), "capacity"
     ...     ] # doctest: +SKIP
     1135.6
     """
-    pp = powerplants.get_deflex_pp_by_year(
+    pp = get_deflex_pp_by_year(
         regions, year, name, overwrite_capacity=True
     )
     return create_powerplants(pp, table_collection, year, name)
@@ -356,18 +357,19 @@ def scenario_chp(table_collection, regions, year, name, weather_year=None):
 
     Examples
     --------
-    >>> regions=geometries.deflex_regions(rmap="de21")  # doctest: +SKIP
-    >>> pp=scenario_powerplants(dict(), regions, 2014, "de21"
+    >>> from reegis import geometries
+    >>> fs=geometries.get_federal_states_polygon()
+    >>> pp=scenario_powerplants(dict(), fs, 2014, "federal_states"
     ...     )  # doctest: +SKIP
-    >>> int(pp["transformer"].loc[("DE01", "hard coal"), "capacity"]
+    >>> int(pp["transformer"].loc[("NW", "hard coal"), "capacity"]
     ...     )  # doctest: +SKIP
     1291
-    >>> table=scenario_chp(pp, regions, 2014, "de21")  # doctest: +SKIP
+    >>> table=scenario_chp(pp, fs, 2014, "federal_states")  # doctest: +SKIP
     >>> transf=table["transformer"]  # doctest: +SKIP
     >>> chp_hp=table["chp_hp"]  # doctest: +SKIP
-    >>> int(transf.loc[("DE01", "hard coal"), "capacity"])  # doctest: +SKIP
+    >>> int(transf.loc[("MV", "hard coal"), "capacity"])  # doctest: +SKIP
     623
-    >>> int(chp_hp.loc[("DE01", "hard coal"), "capacity_elec_chp"]
+    >>> int(chp_hp.loc[("HH", "hard coal"), "capacity_elec_chp"]
     ...     )  # doctest: +SKIP
     667
     """

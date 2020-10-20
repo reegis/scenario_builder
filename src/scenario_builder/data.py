@@ -36,8 +36,8 @@ def get_ewi_data():
 
     Examples
     --------
-    >>> ewi_data = get_ewi_data()
-    >>> round(ewi_data.fuel_costs.loc["hard coal", "value"], 2)
+    >>> my_ewi_data = get_ewi_data()
+    >>> round(my_ewi_data.fuel_costs.loc["hard coal", "value"], 2)
     11.28
 
     """

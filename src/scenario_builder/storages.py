@@ -25,8 +25,9 @@ def scenario_storages(regions, year, name):
 
     Examples
     --------
-    >>> regions=geometries.deflex_regions(rmap="de17")
-    >>> deflex_storages=scenario_storages(regions, 2012, "de17")
+    >>> from reegis import geometries
+    >>> fs=geometries.get_federal_states_polygon()
+    >>> deflex_storages=scenario_storages(fs, 2012, "de17")
     >>> list(deflex_storages.index.get_level_values(0))
     ['DE01', 'DE03', 'DE05', 'DE06', 'DE08', 'DE09', 'DE14', 'DE15', 'DE16']
     >>> int(deflex_storages.loc[("DE03", "phes"), "turbine"])
