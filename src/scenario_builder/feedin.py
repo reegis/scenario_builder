@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 """
 
 from reegis import coastdat
+from reegis import geometries
 
 
 def scenario_feedin(regions, year, name, weather_year=None):
@@ -23,19 +24,19 @@ def scenario_feedin(regions, year, name, weather_year=None):
 
     Examples
     --------
-    >>> regions=geometries.deflex_regions(rmap="de21")  # doctest: +SKIP
-    >>> f=scenario_feedin(regions, 2014, "de21")  # doctest: +SKIP
-    >>> f["DE01"].sum()  # doctest: +SKIP
+    >>> regions = geometries.get_federal_states_polygon()  # doctest: +SKIP
+    >>> f = scenario_feedin(regions, 2014, "fs")  # doctest: +SKIP
+    >>> f["NI"].sum()  # doctest: +SKIP
     geothermal    4380.000000
-    hydro         1346.632529
-    solar          913.652083
-    wind          2159.475906
+    hydro         2242.134748
+    solar          831.424963
+    wind          2602.090478
     dtype: float64
-    >>> f["DE16"].sum()  # doctest: +SKIP
+    >>> f["BY"].sum()  # doctest: +SKIP
     geothermal    4380.000000
-    hydro         1346.632529
-    solar          903.527200
-    wind          1753.673492
+    hydro         2242.134748
+    solar          849.019372
+    wind          1279.604124
     dtype: float64
     """
     wy = weather_year
