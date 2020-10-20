@@ -46,7 +46,7 @@ def get_ewi_data():
         "https://www.ewi.uni-koeln.de/cms/wp-content/uploads/2019/12"
         "/EWI_Merit_Order_Tool_2019_1_4.xlsm"
     )
-    fn = os.path.join(cfg.get("paths", "deflex_general"), "ewi.xlsm")
+    fn = os.path.join(cfg.get("paths", "general"), "ewi.xlsm")
     download_file(fn, url)
 
     # Create named tuple with all sub tables

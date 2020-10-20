@@ -29,10 +29,10 @@ def scenario_storages(regions, year, name):
     >>> fs=geometries.get_federal_states_polygon()
     >>> deflex_storages=scenario_storages(fs, 2012, "de17")
     >>> list(deflex_storages.index.get_level_values(0))
-    ['DE01', 'DE03', 'DE05', 'DE06', 'DE08', 'DE09', 'DE14', 'DE15', 'DE16']
-    >>> int(deflex_storages.loc[("DE03", "phes"), "turbine"])
-    220
-    >>> int(deflex_storages.loc[("DE16", "phes"), "energy"])
+    ['BW', 'BY', 'HE', 'NI', 'NW', 'SH', 'SN', 'ST', 'TH']
+    >>> int(deflex_storages.loc[("TH", "phes"), "turbine"])
+    1522
+    >>> int(deflex_storages.loc[("TH", "phes"), "energy"])
     12115
     """
     stor = storages.pumped_hydroelectric_storage_by_region(regions, year, name)
