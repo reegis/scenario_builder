@@ -1,17 +1,22 @@
-"""Create a basic scenario from the internal data structure.
+# -*- coding: utf-8 -*-
 
-SPDX-FileCopyrightText: 2016-2019 Uwe Krien <krien@uni-bremen.de>
+"""General data processing for general non-reegis data.
+
+SPDX-FileCopyrightText: 2016-2020 Uwe Krien <krien@uni-bremen.de>
 
 SPDX-License-Identifier: MIT
 """
+__copyright__ = "Uwe Krien <krien@uni-bremen.de>"
+__license__ = "MIT"
+
 
 import os
 from types import SimpleNamespace
 
 import pandas as pd
-from reegis.tools import download_file
 
-from scenario_builder import config as cfg
+from deflex import config as cfg
+from deflex import tools
 
 TRANSLATION_FUEL = {
     "Abfall": "waste",
@@ -34,11 +39,13 @@ def get_ewi_data():
     -------
     namedtuple
 
+    TODO: Keep this in deflex???
+
     Examples
     --------
-    >>> my_ewi_data = get_ewi_data()
-    >>> round(my_ewi_data.fuel_costs.loc["hard coal", "value"], 2)
-    11.28
+    # >>> ewi_data = get_ewi_data()
+    # >>> round(ewi_data.fuel_costs.loc["hard coal", "value"], 2)
+    # 11.28
 
     """
     # Download file
@@ -46,8 +53,8 @@ def get_ewi_data():
         "https://www.ewi.uni-koeln.de/cms/wp-content/uploads/2019/12"
         "/EWI_Merit_Order_Tool_2019_1_4.xlsm"
     )
-    fn = os.path.join(cfg.get("paths", "general"), "ewi.xlsm")
-    download_file(fn, url)
+    fn = os.path.join(cfg.get("paths", "deflex_general"), "ewi.xls")
+    tools.download(fn, url)
 
     # Create named tuple with all sub tables
     ewi_tables = {
