@@ -227,7 +227,7 @@ def create_powerplants(
         .loc["volatile_source"]
     }
 
-    if cfg.get("basic", "group_transformer"):
+    if cfg.get("creator", "group_transformer"):
         power_plants["transformer"] = (
             pp.groupby(
                 ["model_classes", region_column, "energy_source_level_2"]
@@ -266,8 +266,8 @@ def create_powerplants(
                 pp_class["capacity"] / pp_class["capacity_in"] * 100
             )
             del pp_class["capacity_in"]
-        if cfg.get("basic", "round") is not None:
-            pp_class = pp_class.round(cfg.get("basic", "round"))
+        if cfg.get("creator", "round") is not None:
+            pp_class = pp_class.round(cfg.get("creator", "round"))
         if "efficiency" in pp_class:
             pp_class["efficiency"] = pp_class["efficiency"].div(100)
         pp_class = pp_class.transpose()
@@ -291,7 +291,7 @@ def add_additional_values(table_collection):
     """
     transf = table_collection["transformer"]
     for values in ["variable_costs", "downtime_factor"]:
-        if cfg.get("basic", "use_{0}".format(values)) is True:
+        if cfg.get("creator", "use_{0}".format(values)) is True:
             add_values = getattr(data.get_ewi_data(), values)
             transf = transf.merge(
                 add_values, right_index=True, how="left", left_on="fuel",
@@ -316,11 +316,11 @@ def add_pp_limit(table_collection, year):
     -------
 
     """
-    if len(cfg.get_dict("limited_transformer").keys()) > 0:
+    if len(cfg.get_list("creator", "limited_transformer")) > 0:
         # Multiply with 1000 to get MWh (bmwi: GWh)
         repp = bmwi.bmwi_re_energy_capacity() * 1000
         trsf = table_collection["transformer"]
-        for limit_trsf in cfg.get_dict("limited_transformer").keys():
+        for limit_trsf in cfg.get_list("creator", "limited_transformer"):
             trsf = table_collection["transformer"]
             try:
                 limit = repp.loc[year, (limit_trsf, "energy")]
