@@ -38,9 +38,9 @@ def scenario_commodity_sources(year):
     >>> round(src.loc[("DE", "natural gas"), "emission"], 2)  # doctest: +SKIP
     201.0
     """
-    if cfg.get("basic", "costs_source") == "reegis":
+    if cfg.get("creator", "costs_source") == "reegis":
         commodity_src = create_commodity_sources_reegis(year)
-    elif cfg.get("basic", "costs_source") == "ewi":
+    elif cfg.get("creator", "costs_source") == "ewi":
         commodity_src = create_commodity_sources_ewi()
     else:
         commodity_src = None
