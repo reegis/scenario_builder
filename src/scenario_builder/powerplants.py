@@ -378,7 +378,7 @@ def scenario_chp(table_collection, regions, year, name, weather_year=None):
     cb = energy_balance.get_transformation_balance_by_region(
         regions, year, name
     )
-    cb.rename(columns={"re": cfg.get("chp", "renewable_source")}, inplace=True)
+    cb.rename(columns={"re": "bioenergy"}, inplace=True)
     heat_b = powerplants.calculate_chp_share_and_efficiency(cb)
 
     heat_demand = demand.get_heat_profiles_deflex(

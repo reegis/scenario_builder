@@ -35,17 +35,18 @@ def get_heat_profiles_deflex(
 
     """
     # separate_regions=keep all demand connected to the region
-    separate_regions = cfg.get_list("demand_heat", "separate_heat_regions")
+    separate_regions = cfg.get_list("creator", "separate_heat_regions")
     # Add lower and upper cases to be not case sensitive
     separate_regions = [x.upper() for x in separate_regions] + [
         x.lower() for x in separate_regions
     ]
 
     # add second fuel to first
-    combine_fuels = cfg.get_dict("combine_heat_fuels")
+    # combine_fuels = cfg.get_dict("combine_heat_fuels")
+    combine_fuels = {"natural gas": "gas"}
 
     # fuels to be dissolved per region
-    region_fuels = cfg.get_list("demand_heat", "local_fuels")
+    region_fuels = cfg.get_list("creator", "local_fuels")
 
     fn = os.path.join(
         cfg.get("paths", "demand"),
@@ -63,8 +64,7 @@ def get_heat_profiles_deflex(
     # Decentralised demand is combined to a nation-wide demand if not part
     # of region_fuels.
     regions = list(
-        set(demand_region.columns.get_level_values(0).unique())
-        - set(separate_regions)
+        set(demand_region.columns.get_level_values(0).unique()) - set(separate_regions)
     )
 
     # If region_fuels is 'all' fetch all fuels to be local.
@@ -87,10 +87,7 @@ def get_heat_profiles_deflex(
         demand_region.index = time_index
 
     if not keep_unit:
-        msg = (
-            "The unit of the source is 'TJ'. "
-            "Will be divided by {0} to get 'MWh'."
-        )
+        msg = "The unit of the source is 'TJ'. " "Will be divided by {0} to get 'MWh'."
         converter = 0.0036
         demand_region = demand_region.div(converter)
         logging.debug(msg.format(converter))
@@ -104,7 +101,7 @@ def get_heat_profiles_deflex(
     return demand_region
 
 
-def scenario_demand(regions, year, name, weather_year=None):
+def scenario_demand(regions, year, name, opsd_version=None, weather_year=None):
     """
 
     Parameters
@@ -112,6 +109,7 @@ def scenario_demand(regions, year, name, weather_year=None):
     regions
     year
     name
+    opsd_version
     weather_year
 
     Returns
@@ -129,9 +127,10 @@ def scenario_demand(regions, year, name, weather_year=None):
 
     """
     demand_series = scenario_elec_demand(
-        pd.DataFrame(), regions, year, name, weather_year=weather_year
+        pd.DataFrame(), regions, year, name, weather_year=weather_year,
+        version=opsd_version
     )
-    if cfg.get("basic", "heat"):
+    if cfg.get("creator", "heat"):
         demand_series = scenario_heat_demand(
             demand_series, regions, year, weather_year=weather_year
         )
@@ -156,16 +155,14 @@ def scenario_heat_demand(table, regions, year, weather_year=None):
     table = pd.concat(
         [
             table,
-            get_heat_profiles_deflex(
-                regions, year, idx, weather_year=weather_year
-            ),
+            get_heat_profiles_deflex(regions, year, idx, weather_year=weather_year),
         ],
         axis=1,
     )
     return table.sort_index(1)
 
 
-def scenario_elec_demand(table, regions, year, name, weather_year=None):
+def scenario_elec_demand(table, regions, year, name, version=None, weather_year=None):
     """
 
     Parameters
@@ -186,7 +183,7 @@ def scenario_elec_demand(table, regions, year, name, weather_year=None):
         demand_year = weather_year
 
     df = demand_elec.get_entsoe_profile_by_region(
-        regions, demand_year, name, annual_demand="bmwi"
+        regions, demand_year, name, annual_demand="bmwi", version=version
     )
     df = pd.concat([df], axis=1, keys=["electrical_load"]).swaplevel(0, 1, 1)
     df = df.reset_index(drop=True)
