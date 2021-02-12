@@ -10,8 +10,8 @@ from warnings import warn
 
 import pandas as pd
 from reegis import commodity_sources
+from reegis import config as cfg
 
-from scenario_builder import config as cfg
 from scenario_builder import data
 
 

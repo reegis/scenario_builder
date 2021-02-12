@@ -11,10 +11,9 @@ import logging
 import os
 
 import pandas as pd
+from reegis import config as cfg
 from reegis import demand_elec
 from reegis import demand_heat
-
-from scenario_builder import config as cfg
 
 
 def get_heat_profiles_deflex(

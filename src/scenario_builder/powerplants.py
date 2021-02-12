@@ -11,11 +11,11 @@ from warnings import warn
 
 import pandas as pd
 from reegis import bmwi
+from reegis import config as cfg
 from reegis import energy_balance
 from reegis import geometries as reegis_geometries
 from reegis import powerplants
 
-from scenario_builder import config as cfg
 from scenario_builder import data
 from scenario_builder import demand
 
