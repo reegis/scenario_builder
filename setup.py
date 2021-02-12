@@ -71,10 +71,11 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "pandas",
-        "reegis@https://github.com/reegis/reegis/archive/master.zip",
     ],
     extras_require={
-        # eg:
+        "reegis": [
+            "reegis@https://github.com/reegis/reegis/archive/master.zip"
+        ]
         #   'rst': ['docutils>=0.11'],
         #   ':python_version=="2.6"': ['argparse'],
     },
