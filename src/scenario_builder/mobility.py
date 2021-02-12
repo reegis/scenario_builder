@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2016-2019 Uwe Krien <krien@uni-bremen.de>
 
 SPDX-License-Identifier: MIT
 """
+import calendar
+import configparser
 
 import pandas as pd
 from reegis import mobility
@@ -39,11 +41,20 @@ def scenario_mobility(year, table):
     energy_per_liter [MJ/l]    34.7
     Name: diesel, dtype: float64
     """
+    if calendar.isleap(year):
+        hours_of_the_year = 8784
+    else:
+        hours_of_the_year = 8760
 
-    table["mobility_mileage"] = mobility.get_mileage_by_type_and_fuel(year)
+    try:
+        other = cfg.get("creator", "mobility_other")
+    except configparser.NoSectionError:
+        other = cfg.get("general", "mobility_other")
+
+    mobility_mileage = mobility.get_mileage_by_type_and_fuel(year)
 
     # fetch table of specific demand by fuel and vehicle type (from 2011)
-    table["mobility_spec_demand"] = (
+    mobility_spec_demand = (
         pd.DataFrame(
             cfg.get_dict_list("fuel consumption"),
             index=["diesel", "petrol", "other"],
@@ -52,18 +63,52 @@ def scenario_mobility(year, table):
         .transpose()
     )
 
+    mobility_spec_demand["other"] = mobility_spec_demand[other]
+    fuel_usage = mobility_spec_demand.mul(mobility_mileage).sum()
+
     # fetch the energy content of the different fuel types
-    table["mobility_energy_content"] = pd.DataFrame(
+    mobility_energy_content = pd.DataFrame(
         cfg.get_dict("energy_per_liter"), index=["energy_per_liter [MJ/l]"]
     )[["diesel", "petrol", "other"]]
 
-    for key in [
-        "mobility_mileage",
-        "mobility_spec_demand",
-        "mobility_energy_content",
-    ]:
-        # Add "DE" as region level to be consistent to other tables
-        table[key].columns = pd.MultiIndex.from_product(
-            [["DE"], table[key].columns]
-        )
+    mobility_energy_content["other"] = mobility_energy_content[other]
+
+    # Convert to MW????? BITTE GENAU!!!
+    energy_usage = fuel_usage.mul(mobility_energy_content).div(3600)
+
+    s = energy_usage.div(hours_of_the_year).transpose()[
+        "energy_per_liter [MJ/l]"
+    ]
+    table["mobility_series"] = pd.DataFrame(
+        index=range(hours_of_the_year), columns=energy_usage.columns
+    ).fillna(1)
+
+    table["mobility_series"] = table["mobility_series"].mul(s, axis=1)
+
+    table["mobility_series"][other] += table["mobility_series"]["other"]
+    table["mobility_series"].drop("other", axis=1, inplace=True)
+
+    table["mobility_series"] = (
+        table["mobility_series"].astype(float).round().astype(int)
+    )
+
+    table["mobility"] = pd.DataFrame(
+        index=["diesel", "petrol", "electricity"],
+        columns=["efficiency", "source", "source_region"],
+    )
+
+    for col in table["mobility"].columns:
+        for idx in table["mobility"].index:
+            if col != "source_region":
+                table["mobility"].loc[idx, col] = cfg.get(col, idx)
+            else:
+                table["mobility"].loc[idx, col] = "DE"
+
+    # Add "DE" as region level to be consistent to other tables
+    table["mobility"].index = pd.MultiIndex.from_product(
+        [["DE"], table["mobility"].index]
+    )
+    table["mobility_series"].columns = pd.MultiIndex.from_product(
+        [["DE"], table["mobility_series"].columns]
+    )
     return table

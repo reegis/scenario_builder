@@ -11,7 +11,9 @@ from reegis.config import get  # noqa: F401
 from reegis.config import get_dict  # noqa: F401
 from reegis.config import get_dict_list  # noqa: F401
 from reegis.config import get_list  # noqa: F401
+from reegis.config import has_option  # noqa: F401
 from reegis.config import init  # noqa: F401
+from reegis.config import tmp_set  # noqa: F401
 
 _loaded = False
 if not _loaded:

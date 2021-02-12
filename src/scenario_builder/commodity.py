@@ -45,14 +45,15 @@ def scenario_commodity_sources(year):
     else:
         commodity_src = None
 
-    commodity_src = commodity_src.transpose()
-
     # Add region level to be consistent to other tables
-    commodity_src.columns = pd.MultiIndex.from_product(
-        [["DE"], commodity_src.columns]
+    commodity_src.index = pd.MultiIndex.from_product(
+        [["DE"], commodity_src.index]
     )
 
-    return commodity_src.transpose()
+    if cfg.get("creator", "use_CO2_costs") is False:
+        commodity_src["co2_price"] = 0
+
+    return commodity_src
 
 
 def create_commodity_sources_ewi():

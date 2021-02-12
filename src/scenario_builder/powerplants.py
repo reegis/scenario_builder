@@ -36,7 +36,7 @@ def pp_reegis2deflex(regions, name, filename_in=None, filename_out=None):
         filename_out = os.path.join(
             cfg.get("paths", "powerplants"),
             cfg.get("powerplants", "deflex_pp"),
-        ).format(map=cfg.get("init", "map"))
+        ).format(map=name)
 
     # Add deflex regions to powerplants
     pp = powerplants.add_regions_to_powerplants(
@@ -195,9 +195,7 @@ def scenario_powerplants(table_collection, regions, year, name):
     ...     ] # doctest: +SKIP
     1135.6
     """
-    pp = get_deflex_pp_by_year(
-        regions, year, name, overwrite_capacity=True
-    )
+    pp = get_deflex_pp_by_year(regions, year, name, overwrite_capacity=True)
     return create_powerplants(pp, table_collection, year, name)
 
 
@@ -293,8 +291,15 @@ def add_additional_values(table_collection):
     for values in ["variable_costs", "downtime_factor"]:
         if cfg.get("creator", "use_{0}".format(values)) is True:
             add_values = getattr(data.get_ewi_data(), values)
+            if cfg.has_option("creator", "downtime_bioenergy"):
+                add_values.loc["bioenergy", "value"] = cfg.get(
+                    "creator", "downtime_bioenergy"
+                )
             transf = transf.merge(
-                add_values, right_index=True, how="left", left_on="fuel",
+                add_values,
+                right_index=True,
+                how="left",
+                left_on="fuel",
             )
             transf.drop(["unit", "source"], axis=1, inplace=True)
             transf.rename({"value": values}, axis=1, inplace=True)
@@ -500,7 +505,10 @@ def chp_table(heat_b, heat_demand, table_collection, regions=None):
         table_collection, eta_heat_chp, eta_elec_chp
     )
 
-    return table_collection
+    return {
+        "chp_hp": table_collection["chp_hp"],
+        "transformer": table_collection["transformer"],
+    }
 
 
 def substract_chp_capacity_and_limit_from_pp(tc, eta_heat_chp, eta_elec_chp):
