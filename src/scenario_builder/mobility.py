@@ -78,17 +78,17 @@ def scenario_mobility(year, table):
     s = energy_usage.div(hours_of_the_year).transpose()[
         "energy_per_liter [MJ/l]"
     ]
-    table["mobility_series"] = pd.DataFrame(
+    table["mobility series"] = pd.DataFrame(
         index=range(hours_of_the_year), columns=energy_usage.columns
     ).fillna(1)
 
-    table["mobility_series"] = table["mobility_series"].mul(s, axis=1)
+    table["mobility series"] = table["mobility series"].mul(s, axis=1)
 
-    table["mobility_series"][other] += table["mobility_series"]["other"]
-    table["mobility_series"].drop("other", axis=1, inplace=True)
+    table["mobility series"][other] += table["mobility series"]["other"]
+    table["mobility series"].drop("other", axis=1, inplace=True)
 
-    table["mobility_series"] = (
-        table["mobility_series"].astype(float).round().astype(int)
+    table["mobility series"] = (
+        table["mobility series"].astype(float).round().astype(int)
     )
 
     table["mobility"] = pd.DataFrame(
@@ -107,7 +107,7 @@ def scenario_mobility(year, table):
     table["mobility"].index = pd.MultiIndex.from_product(
         [["DE"], table["mobility"].index]
     )
-    table["mobility_series"].columns = pd.MultiIndex.from_product(
-        [["DE"], table["mobility_series"].columns]
+    table["mobility series"].columns = pd.MultiIndex.from_product(
+        [["DE"], table["mobility series"].columns]
     )
     return table
