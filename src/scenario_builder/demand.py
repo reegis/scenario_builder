@@ -1,6 +1,6 @@
 """Create a basic scenario from the internal data structure.
 
-SPDX-FileCopyrightText: 2016-2019 Uwe Krien <krien@uni-bremen.de>
+SPDX-FileCopyrightText: 2016-2021 Uwe Krien <krien@uni-bremen.de>
 
 SPDX-License-Identifier: MIT
 """
@@ -63,7 +63,8 @@ def get_heat_profiles_deflex(
     # Decentralised demand is combined to a nation-wide demand if not part
     # of region_fuels.
     regions = list(
-        set(demand_region.columns.get_level_values(0).unique()) - set(separate_regions)
+        set(demand_region.columns.get_level_values(0).unique())
+        - set(separate_regions)
     )
 
     # If region_fuels is 'all' fetch all fuels to be local.
@@ -71,7 +72,7 @@ def get_heat_profiles_deflex(
         region_fuels = demand_region.columns.get_level_values(1).unique()
 
     for fuel in demand_region.columns.get_level_values(1).unique():
-        demand_region["DE_demand", fuel] = 0
+        demand_region["DE", fuel] = 0
 
     for region in regions:
         for f1, f2 in combine_fuels.items():
@@ -79,14 +80,17 @@ def get_heat_profiles_deflex(
             demand_region.drop((region, f2), axis=1, inplace=True)
         cols = list(set(demand_region[region].columns) - set(region_fuels))
         for col in cols:
-            demand_region["DE_demand", col] += demand_region[region, col]
+            demand_region["DE", col] += demand_region[region, col]
             demand_region.drop((region, col), axis=1, inplace=True)
 
     if time_index is not None:
         demand_region.index = time_index
 
     if not keep_unit:
-        msg = "The unit of the source is 'TJ'. " "Will be divided by {0} to get 'MWh'."
+        msg = (
+            "The unit of the source is 'TJ'. "
+            "Will be divided by {0} to get 'MWh'."
+        )
         converter = 0.0036
         demand_region = demand_region.div(converter)
         logging.debug(msg.format(converter))
@@ -121,27 +125,32 @@ def scenario_demand(regions, year, name, opsd_version=None, weather_year=None):
     >>> my_demand=scenario_demand(regions, 2014, "de21")  # doctest: +SKIP
     >>> int(my_demand["DE01", "district heating"].sum())  # doctest: +SKIP
     18639262
-    >>> int(my_demand["DE05", "electrical_load"].sum())  # doctest: +SKIP
+    >>> int(my_demand["DE05", "all"].sum())  # doctest: +SKIP
     10069304
 
     """
-    demand_series = scenario_elec_demand(
-        pd.DataFrame(), regions, year, name, weather_year=weather_year,
-        version=opsd_version
-    )
+    demand_series = {
+        "electricity demand series": scenario_elec_demand(
+            pd.DataFrame(),
+            regions,
+            year,
+            name,
+            weather_year=weather_year,
+            version=opsd_version,
+        )
+    }
     if cfg.get("creator", "heat"):
-        demand_series = scenario_heat_demand(
-            demand_series, regions, year, weather_year=weather_year
+        demand_series["heat demand series"] = scenario_heat_demand(
+            regions, year, weather_year=weather_year
         )
     return demand_series
 
 
-def scenario_heat_demand(table, regions, year, weather_year=None):
+def scenario_heat_demand(regions, year, weather_year=None):
     """
 
     Parameters
     ----------
-    table
     regions
     year
     weather_year
@@ -150,18 +159,14 @@ def scenario_heat_demand(table, regions, year, weather_year=None):
     -------
 
     """
-    idx = table.index  # Use the index of the existing time series
-    table = pd.concat(
-        [
-            table,
-            get_heat_profiles_deflex(regions, year, idx, weather_year=weather_year),
-        ],
-        axis=1,
-    )
-    return table.sort_index(1)
+    return get_heat_profiles_deflex(
+        regions, year, weather_year=weather_year
+    ).sort_index(1)
 
 
-def scenario_elec_demand(table, regions, year, name, version=None, weather_year=None):
+def scenario_elec_demand(
+    table, regions, year, name, version=None, weather_year=None
+):
     """
 
     Parameters
@@ -184,7 +189,7 @@ def scenario_elec_demand(table, regions, year, name, version=None, weather_year=
     df = demand_elec.get_entsoe_profile_by_region(
         regions, demand_year, name, annual_demand="bmwi", version=version
     )
-    df = pd.concat([df], axis=1, keys=["electrical_load"]).swaplevel(0, 1, 1)
+    df = pd.concat([df], axis=1, keys=["all"]).swaplevel(0, 1, 1)
     df = df.reset_index(drop=True)
     if not calendar.isleap(year) and len(df) > 8760:
         df = df.iloc[:8760]

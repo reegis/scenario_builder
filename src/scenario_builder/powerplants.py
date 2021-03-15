@@ -1,6 +1,6 @@
 """Create a basic scenario from the internal data structure.
 
-SPDX-FileCopyrightText: 2016-2019 Uwe Krien <krien@uni-bremen.de>
+SPDX-FileCopyrightText: 2016-2021 Uwe Krien <krien@uni-bremen.de>
 
 SPDX-License-Identifier: MIT
 """
@@ -188,15 +188,17 @@ def scenario_powerplants(table_collection, regions, year, name):
     >>> fs=geometries.get_federal_states_polygon()
     >>> my_pp=scenario_powerplants(
     ...     dict(), fs, 2014, "federal_states")  # doctest: +SKIP
-    >>> my_pp["volatile_source"].loc[("DE03", "wind"), "capacity"
+    >>> my_pp["volatile plants"].loc[("DE03", "wind"), "capacity"
     ...     ] # doctest: +SKIP
     3052.8
-    >>> my_pp["transformer"].loc[("DE03", "lignite"), "capacity"
+    >>> my_pp["power plants"].loc[("DE03", "lignite"), "capacity"
     ...     ] # doctest: +SKIP
     1135.6
     """
     pp = get_deflex_pp_by_year(regions, year, name, overwrite_capacity=True)
-    return create_powerplants(pp, table_collection, year, name)
+    tables = create_powerplants(pp, table_collection, year, name)
+    tables["power plants"]["source region"] = "DE"
+    return tables
 
 
 def create_powerplants(
@@ -218,27 +220,27 @@ def create_powerplants(
     )
 
     power_plants = {
-        "volatile_source": pp.groupby(
+        "volatile plants": pp.groupby(
             ["model_classes", region_column, "energy_source_level_2"]
         )
         .sum()[["capacity", "count"]]
-        .loc["volatile_source"]
+        .loc["volatile plants"]
     }
 
     if cfg.get("creator", "group_transformer"):
-        power_plants["transformer"] = (
+        power_plants["power plants"] = (
             pp.groupby(
                 ["model_classes", region_column, "energy_source_level_2"]
             )
             .sum()[["capacity", "capacity_in", "count"]]
-            .loc["transformer"]
+            .loc["power plants"]
         )
-        power_plants["transformer"]["fuel"] = power_plants[
-            "transformer"
+        power_plants["power plants"]["fuel"] = power_plants[
+            "power plants"
         ].index.get_level_values(1)
     else:
         pp["efficiency"] = pp["efficiency"].round(2)
-        power_plants["transformer"] = (
+        power_plants["power plants"] = (
             pp.groupby(
                 [
                     "model_classes",
@@ -248,14 +250,14 @@ def create_powerplants(
                 ]
             )
             .sum()[["capacity", "capacity_in", "count"]]
-            .loc["transformer"]
+            .loc["power plants"]
         )
-        power_plants["transformer"]["fuel"] = power_plants[
-            "transformer"
+        power_plants["power plants"]["fuel"] = power_plants[
+            "power plants"
         ].index.get_level_values(1)
-        power_plants["transformer"].index = [
-            power_plants["transformer"].index.get_level_values(0),
-            power_plants["transformer"].index.map("{0[1]} - {0[2]}".format),
+        power_plants["power plants"].index = [
+            power_plants["power plants"].index.get_level_values(0),
+            power_plants["power plants"].index.map("{0[1]} - {0[2]}".format),
         ]
 
     for class_name, pp_class in power_plants.items():
@@ -271,6 +273,7 @@ def create_powerplants(
         pp_class = pp_class.transpose()
         pp_class.index.name = "parameter"
         table_collection[class_name] = pp_class.transpose()
+
     table_collection = add_pp_limit(table_collection, year)
     table_collection = add_additional_values(table_collection)
     return table_collection
@@ -287,7 +290,7 @@ def add_additional_values(table_collection):
     -------
 
     """
-    transf = table_collection["transformer"]
+    transf = table_collection["power plants"]
     for values in ["variable_costs", "downtime_factor"]:
         if cfg.get("creator", "use_{0}".format(values)) is True:
             add_values = getattr(data.get_ewi_data(), values)
@@ -305,7 +308,7 @@ def add_additional_values(table_collection):
             transf.rename({"value": values}, axis=1, inplace=True)
         else:
             transf[values] = 0
-    table_collection["transformer"] = transf
+    table_collection["power plants"] = transf
     return table_collection
 
 
@@ -324,9 +327,9 @@ def add_pp_limit(table_collection, year):
     if len(cfg.get_list("creator", "limited_transformer")) > 0:
         # Multiply with 1000 to get MWh (bmwi: GWh)
         repp = bmwi.bmwi_re_energy_capacity() * 1000
-        trsf = table_collection["transformer"]
+        trsf = table_collection["power plants"]
         for limit_trsf in cfg.get_list("creator", "limited_transformer"):
-            trsf = table_collection["transformer"]
+            trsf = table_collection["power plants"]
             try:
                 limit = repp.loc[year, (limit_trsf, "energy")]
             except KeyError:
@@ -342,7 +345,7 @@ def add_pp_limit(table_collection, year):
             )
         trsf["limit_elec_pp"] = trsf["limit_elec_pp"].fillna(float("inf"))
 
-        table_collection["transformer"] = trsf
+        table_collection["power plants"] = trsf
     return table_collection
 
 
@@ -366,12 +369,12 @@ def scenario_chp(table_collection, regions, year, name, weather_year=None):
     >>> fs=geometries.get_federal_states_polygon()
     >>> pp=scenario_powerplants(dict(), fs, 2014, "federal_states"
     ...     )  # doctest: +SKIP
-    >>> int(pp["transformer"].loc[("NW", "hard coal"), "capacity"]
+    >>> int(pp["power plants"].loc[("NW", "hard coal"), "capacity"]
     ...     )  # doctest: +SKIP
     1291
     >>> table=scenario_chp(pp, fs, 2014, "federal_states")  # doctest: +SKIP
-    >>> transf=table["transformer"]  # doctest: +SKIP
-    >>> chp_hp=table["chp_hp"]  # doctest: +SKIP
+    >>> transf=table["power plants"]  # doctest: +SKIP
+    >>> chp_hp=table["heat-chp plants"]  # doctest: +SKIP
     >>> int(transf.loc[("MV", "hard coal"), "capacity"])  # doctest: +SKIP
     623
     >>> int(chp_hp.loc[("HH", "hard coal"), "capacity_elec_chp"]
@@ -389,7 +392,9 @@ def scenario_chp(table_collection, regions, year, name, weather_year=None):
     heat_demand = demand.get_heat_profiles_deflex(
         regions, year, weather_year=weather_year
     )
-    return chp_table(heat_b, heat_demand, table_collection)
+    tables = chp_table(heat_b, heat_demand, table_collection)
+    tables["heat-chp plants"]["source region"] = "DE"
+    return tables
 
 
 def chp_table(heat_b, heat_demand, table_collection, regions=None):
@@ -499,15 +504,15 @@ def chp_table(heat_b, heat_demand, table_collection, regions=None):
     #     del trsf[col]
     # trsf[trsf < 0] = 0
 
-    table_collection["chp_hp"] = chp_hp.transpose()
+    table_collection["heat-chp plants"] = chp_hp.transpose()
 
     table_collection = substract_chp_capacity_and_limit_from_pp(
         table_collection, eta_heat_chp, eta_elec_chp
     )
 
     return {
-        "chp_hp": table_collection["chp_hp"],
-        "transformer": table_collection["transformer"],
+        "heat-chp plants": table_collection["heat-chp plants"],
+        "power plants": table_collection["power plants"],
     }
 
 
@@ -524,8 +529,8 @@ def substract_chp_capacity_and_limit_from_pp(tc, eta_heat_chp, eta_elec_chp):
     -------
 
     """
-    chp_hp = tc["chp_hp"]
-    pp = tc["transformer"]
+    chp_hp = tc["heat-chp plants"]
+    pp = tc["power plants"]
     diff = 0
     for region in chp_hp.index.get_level_values(0).unique():
         for fuel in chp_hp.loc[region].index:

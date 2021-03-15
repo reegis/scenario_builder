@@ -1,6 +1,6 @@
 """Create a basic scenario from the internal data structure.
 
-SPDX-FileCopyrightText: 2016-2019 Uwe Krien <krien@uni-bremen.de>
+SPDX-FileCopyrightText: 2016-2021 Uwe Krien <krien@uni-bremen.de>
 
 SPDX-License-Identifier: MIT
 """
@@ -78,36 +78,38 @@ def scenario_mobility(year, table):
     s = energy_usage.div(hours_of_the_year).transpose()[
         "energy_per_liter [MJ/l]"
     ]
-    table["mobility series"] = pd.DataFrame(
+    table["mobility demand series"] = pd.DataFrame(
         index=range(hours_of_the_year), columns=energy_usage.columns
     ).fillna(1)
 
-    table["mobility series"] = table["mobility series"].mul(s, axis=1)
+    table["mobility demand series"] = table["mobility demand series"].mul(
+        s, axis=1
+    )
 
-    table["mobility series"][other] += table["mobility series"]["other"]
-    table["mobility series"].drop("other", axis=1, inplace=True)
+    table["mobility demand series"][other] += table["mobility demand series"][
+        "other"
+    ]
+    table["mobility demand series"].drop("other", axis=1, inplace=True)
 
-    table["mobility series"] = (
-        table["mobility series"].astype(float).round().astype(int)
+    table["mobility demand series"] = (
+        table["mobility demand series"].astype(float).round().astype(int)
     )
 
     table["mobility"] = pd.DataFrame(
         index=["diesel", "petrol", "electricity"],
-        columns=["efficiency", "source", "source_region"],
+        columns=["efficiency", "source", "source region"],
     )
 
     for col in table["mobility"].columns:
         for idx in table["mobility"].index:
-            if col != "source_region":
-                table["mobility"].loc[idx, col] = cfg.get(col, idx)
-            else:
-                table["mobility"].loc[idx, col] = "DE"
+            section = "mobility: " + idx
+            table["mobility"].loc[idx, col] = cfg.get(section, col)
 
     # Add "DE" as region level to be consistent to other tables
     table["mobility"].index = pd.MultiIndex.from_product(
         [["DE"], table["mobility"].index]
     )
-    table["mobility series"].columns = pd.MultiIndex.from_product(
-        [["DE"], table["mobility series"].columns]
+    table["mobility demand series"].columns = pd.MultiIndex.from_product(
+        [["DE"], table["mobility demand series"].columns]
     )
     return table

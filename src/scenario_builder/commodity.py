@@ -1,6 +1,6 @@
 """Create a basic scenario from the internal data structure.
 
-SPDX-FileCopyrightText: 2016-2019 Uwe Krien <krien@uni-bremen.de>
+SPDX-FileCopyrightText: 2016-2021 Uwe Krien <krien@uni-bremen.de>
 
 SPDX-License-Identifier: MIT
 """
@@ -53,6 +53,7 @@ def scenario_commodity_sources(year):
     if cfg.get("creator", "use_CO2_costs") is False:
         commodity_src["co2_price"] = 0
 
+    commodity_src["annual limit"] = "inf"
     return commodity_src
 
 
