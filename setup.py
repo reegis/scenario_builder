@@ -23,7 +23,7 @@ def read(*names, **kwargs):
 
 setup(
     name="scenario-builder",
-    version="v0.0.1",
+    version="v0.0.2",
     license="MIT",
     description=(
         "Tools to build scenario inputs from historical data or"
@@ -36,6 +36,7 @@ setup(
         ),
         re.sub(":[a-z]+:`~?(.*?)`", r"``\1``", read("CHANGELOG.rst")),
     ),
+    long_description_content_type="text/x-rst",
     author="reegis",
     author_email="krien@uni-bremen.de",
     url="https://github.com/reegis/scenario_builder",
@@ -53,9 +54,9 @@ setup(
         "Operating System :: Microsoft :: Windows",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Topic :: Utilities",
     ],
     project_urls={
@@ -68,13 +69,13 @@ setup(
     keywords=[
         # eg: 'keyword1', 'keyword2', 'keyword3',
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=[
         "pandas",
     ],
     extras_require={
         "reegis": [
-            "reegis@https://github.com/reegis/reegis/archive/master.zip"
+            "reegis",
         ]
         #   'rst': ['docutils>=0.11'],
         #   ':python_version=="2.6"': ['argparse'],
