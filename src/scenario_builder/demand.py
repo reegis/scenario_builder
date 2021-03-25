@@ -142,7 +142,7 @@ def scenario_demand(regions, year, name, opsd_version=None, weather_year=None):
     if cfg.get("creator", "heat"):
         demand_series["heat demand series"] = scenario_heat_demand(
             regions, year, weather_year=weather_year
-        )
+        ).reset_index(drop=True)
     return demand_series
 
 
